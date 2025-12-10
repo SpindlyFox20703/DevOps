@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My DevOps Dashboard</title>
+    <style>body { font-family: Arial; text-align: center; }</style>
+</head>
+<body>
+    <h1>Welcome to My On-Prem DevOps Stack</h1>
+    <p>Quick links to services:</p>
+    <ul>
+        <li><a href="{{GITLAB_URL}}">GitLab Repository</a></li>
+        <li><a href="{{JENKINS_URL}}">Jenkins CI/CD</a></li>
+        <li><a href="{{GRAFANA_URL}}">Grafana Dashboards</a></li>
+        <li><a href="{{PROMETHEUS_URL}}">Prometheus Metrics</a></li>
+        <li><a href="{{LOKI_URL}}">Loki Logs</a></li>
+    </ul>
+</body>
+</html>

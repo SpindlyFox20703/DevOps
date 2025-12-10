@@ -1,0 +1,91 @@
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - gitlab_data:/var/opt/gitlab
+      - gitlab_logs:/var/log/gitlab
+      - gitlab_config:/etc/gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url '${GITLAB_EXTERNAL_URL}'  # Replace with your actual DNS (use HTTPS if NPM handles SSL)
+        gitlab_rails['initial_root_password'] = '${GITLAB_ROOT_PASSWORD}'  # Use env var for security
+    restart: unless-stopped
+    networks:
+      - devops_net
+
+  jenkins:
+    image: jenkins/jenkins:lts
+    ports:
+      - "8080:8080"
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock  # For Docker-in-Docker (secure with user perms if possible)
+    environment:
+      JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
+    restart: unless-stopped
+    networks:
+      - devops_net
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: '${GRAFANA_ADMIN_PASSWORD}'  # Use env var for security
+    restart: unless-stopped
+    networks:
+      - devops_net
+
+  loki:
+    image: grafana/loki:latest
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+    networks:
+      - devops_net
+
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    restart: unless-stopped
+    networks:
+      - devops_net
+
+  webpage:
+    image: nginx:alpine
+    ports:
+      - "8081:80"
+    volumes:
+      - ./webpage:/usr/share/nginx/html
+    environment:
+      - GITLAB_URL=${GITLAB_URL}  
+      - JENKINS_URL=${JENKINS_URL}
+      - GRAFANA_URL=${GRAFANA_URL}
+      - PROMETHEUS_URL=${PROMETHEUS_URL}
+      - LOKI_URL=${LOKI_URL}
+    command: sh -c "envsubst < /usr/share/nginx/html/index.html.template > /usr/share/nginx/html/index.html && nginx -g 'daemon off;'"
+    restart: unless-stopped
+    networks:
+      - devops_net
+
+volumes:
+  gitlab_data:
+  gitlab_logs:
+  gitlab_config:
+  jenkins_home:
+  grafana_data:
+
+networks:
+  devops_net:
+    driver: bridge
