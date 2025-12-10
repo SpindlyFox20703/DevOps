@@ -15,7 +15,7 @@ A self-hosted DevOps environment using Docker Compose, featuring GitLab for repo
 - Nginx Proxy Manager (or similar) on a separate machine for routing.
 
 ## Setup Instructions
-1. Clone this repo: `git clone https://github.com/yourusername/your-repo-name.git`
+1. Clone this repo: `[git clone https://github.com/yourusername/your-repo-name.git](https://github.com/SpindlyFox20703/DevOps)`
 2. Create required files:
    - `.env` with your passwords and URLs (see `.env.example`).
    - `prometheus.yml` and `loki-config.yml` (provided in the repo).
@@ -36,4 +36,5 @@ Feel free to fork and improve! Open issues for bugs or suggestions.
 This project is open-source under the MIT License.
 
 ## Credits and Acknowledgments
+
 This setup was inspired and guided by assistance from Grok, an AI built by xAI. Special thanks to the open-source communities behind Docker, GitLab, Jenkins, Grafana, Loki, Prometheus, and Trivy for making self-hosted DevOps accessible.
